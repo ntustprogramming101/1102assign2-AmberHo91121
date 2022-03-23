@@ -1,12 +1,12 @@
-  PImage bgImg, soilImg,titleImg,robotImg;
+  PImage bgImg, soilImg,titleImg,robotImg,lifeImg,cabbageImg;
   int block = 80;
+  float lifeCount = 2;
   
   //badcabbage;(
-  PImage cabbageImg;
   float cabbageRandomX;
   float cabbageRandomY;
-  float cabfinalX = cabbageRandomX*block;
-  float cabfinalY = 2*block+cabbageRandomY*block;
+  float cabfinalX;
+  float cabfinalY;
   
   //gooooooood start/end plz
   PImage restartHoveredImg;
@@ -23,14 +23,11 @@
   PImage groundhogImg;
   float groundhogX = 4*block;
   float groundhogY = block;  
-  float groundhogXMove=0;
-  float groundhogYMove=0; 
-  float grfinalX = groundhogX+groundhogXMove;
-  float grfinalY = groundhogY+groundhogYMove;
+  float groundhogXPlus;
+  float groundhogYPlus;
   PImage downImg;
   PImage rightImg;
   PImage leftImg;
-  float groundhogSpeed = 0.25;
   //groundhog
   
   PImage soldierImg;
@@ -40,24 +37,25 @@
   float xSoldier;
   float ySoldier;//soldier//soldierPlace
   
-  boolean downPressed;
-  boolean rightPressed;
-  boolean leftPressed;
+  boolean downPressed = false;
+  boolean rightPressed = false;
+  boolean leftPressed = false;
 
   final int GAME_START = 0;  
   final int GAME_RUN = 1;
   final int GAME_LOSE = 2;  
-  int gameState = 0;
+  int gameState = GAME_START;
   
   int actionFrame;
+  float newTime = millis();//time when the groundhog started moving (1)
+  float lastTime = millis();//last groundhog moving (14)
   
 void setup() {
+  
   size(640, 480, P2D);
   bgImg = loadImage("img/bg.jpg");
   groundhogImg = loadImage("img/groundhog.png");
-  lifeOneImg = loadImage("img/life.png");
-  lifeTwoImg = loadImage("img/life.png");
-  lifeThreeImg = loadImage("img/life.png");
+  lifeImg = loadImage("img/life.png");
   robotImg = loadImage("img/robot.png");
   soilImg = loadImage("img/soil.png");
   soldierImg = loadImage("img/soldier.png");
@@ -80,24 +78,29 @@ void setup() {
   ySoldier = 160+soldierRandomY*80;//soldierMovement
   
   //the framerate of the groundhog moves
+  frameRate(60);
   gameState = GAME_START;
   lastTime = millis();
+  
+  cabbageRandomX = floor(random(7));
+  cabbageRandomY = floor(random(4));
 }
 
 void draw(){ 
   
   switch(gameState){
-    
-   /* case GAME_START :
+   
+   case GAME_START :
       image(titleImg,0,0);
       image(startNormalImg, buttonX, buttonY);
       if (mouseX > buttonX && mouseX < buttonX + button_W 
       && mouseY > buttonY && mouseY < buttonY + button_H){ 
           image(startHoveredImg, buttonX, buttonY);
-          if(mousePressed){ gameState = GAME_RUN;
+          if(mousePressed){ 
+            gameState = GAME_RUN;
           }
         }
-        break;*/
+        break;
      
     case GAME_RUN :
           //basic settings
@@ -112,132 +115,160 @@ void draw(){
           stroke(255,255,0);
           ellipse(590,50,120,120);
           //sun
-          image(groundhogImg,grfinalX,grfinalY);
-          //groundhog
+          lifeCount = 2;
           
-          ////////////////////////////////////////////////////////////heart
+          image(groundhogImg,groundhogX, groundhogY);
+          /////////////////////////////boundary detection
+          if(groundhogY >= height){
+          groundhogY = height-block;
+          }//down boundary
+          
+          if(groundhogX >= width){
+          groundhogX = width-block;
+          }//right boundary
+          
+          if(groundhogX <= 0){
+          groundhogX = 0;
+          } //left boundary
+          ///////////////////////////////groundhog      
+          
+          //heart
           if(lifeCount == 2){
-            image(life,10,10);
-            image(life,80,10);            
+            image(lifeImg,10,10);
+            image(lifeImg,80,10);   
+            gameState = GAME_RUN;
           }else if(lifeCount == 3){
-            image(life,10,10);
-            image(life,80,10);
-            image(life,150,10);            
+            image(lifeImg,10,10);
+            image(lifeImg,80,10);
+            image(lifeImg,150,10);  
+            gameState = GAME_RUN;
           }else if(lifeCount == 1){           
-            image(life,10,10); 
-          }else if(lifeCount == 0){
-           gameState=Game_LOSE;
-          }    
-          ///////////////////////////////////////////////////////////
-          
-          //where's the cabbage 
-          cabbageRandomX = floor(random(6));
-          cabbageRandomY = floor(random(4));
-          image(cabbageImg , cabfinalX, cabfinalY);
-          
+            image(lifeImg,10,10); 
+            gameState = GAME_RUN;
+          }else if(lifeCount <= 0){
+           gameState = GAME_LOSE;
+           break;
+          }  
+                  
           //soldier moves
-          soldierRandomX = floor(random(6));
+          soldierRandomX = floor(random(7));
           soldierRandomY = floor(random(4));
           image(soldierImg , xSoldier , ySoldier);
           xSoldier = xSoldier+5;
           xSoldier %=640;
           
+            
           //soldier and groundhog touch detection
-          if (grfinalX + block > xSoldier && grfinalX < xSoldier + block
-          && grfinalY == ySoldier ){
-          image(groundhogImg,1000,1000);
-          image(groundhogImg,5*block,block);
-          }
+          if (groundhogX >= xSoldier && groundhogX + block <= xSoldier + block
+          && groundhogY == ySoldier ){
+          groundhogX = 4*block;
+          groundhogY = block;
+          lifeCount -= 1;
+          if (lifeCount < 1){
+          gameState = GAME_LOSE;
+          break;
+          }}
           
-          ////////////////////////////////////////////////////////////////////
+          //where's the cabbage 
+          float cabfinalX = cabbageRandomX*block;
+          float cabfinalY = 2*block+cabbageRandomY*block;
+          image(cabbageImg , cabfinalX, cabfinalY);
+          
+          //eat the cabbage and recover the heart
+          if(groundhogX >= cabfinalX && groundhogX + block <= cabfinalX +block
+          && groundhogY >= cabfinalY && groundhogY + block <= cabfinalY +block){
+            lifeCount += 1;
+            image(cabbageImg , -1000, -1000);
+            gameState = GAME_RUN;
+            if (lifeCount > 3){
+            lifeCount = 3;
+            }  
+         
           //groundhog frame 
           if (downPressed) {
             actionFrame++;
             if (actionFrame > 0 && actionFrame < 15) {
-              groundhogYMove += ONE_BLOCK / 15.0;
-              image(downImg, grfinalX, grfinalY);
-            } 
-          }
+              groundhogYPlus += block / 15.0;
+              image(downImg, groundhogX, groundhogY + groundhogYPlus);
+            } else {
+              groundhogY = groundhogY + block;
+              downPressed = false;
+         }
+        }
       
           if (rightPressed) {
             actionFrame++;
             if (actionFrame > 0 && actionFrame < 15) {
-              groundhogXMove += ONE_BLOCK / 15.0;
-              image(rightImg, grfinalX, grfinalY);
-            }
-          }
+              groundhogXPlus += block / 15.0;
+              image(rightImg, groundhogX + groundhogXPlus, groundhogY);
+            } else {
+              groundhogX = groundhogX + block;
+              rightPressed = false;
+         }
+        }
                 
           if (leftPressed) {
             actionFrame++;
             if (actionFrame > 0 && actionFrame < 15) {
-              groundhogXMove -= ONE_BLOCK / 15.0;
-              image(leftImg, grfinalX, grfinalY);
-            }
-          }
+              groundhogXPlus -= block / 15.0;
+              image(leftImg, groundhogX, groundhogY);
+            } else {
+              groundhogX = groundhogX - block;
+              leftPressed = false;
+         }
+        }
+ }       
+          break;
           ////////////////////////////////////////////////////////////////////////
           
-           //eat the cabbage and recover the heart
-          if(grfinalX > cabfinalX && grfinalX + block < cabfinalX +block
-          && grfinalY > cabfinalY && grfinalY + block < cabfinalY +block){
-            image(cabbageImg, cabfinalX+1000, cabfinalY+1000);
-            lifeCount == 3;
-          }
-          break;
       
     case GAME_LOSE :
       image(gameOverImg, 0, 0);
-      if (mouseX > buttonX && mouseX < buttonX+button_W && 
-      mouseY > buttonY && mouseY < buttonY+button_H){ 
-          image(restartHoveredImg, buttonX, buttonY);
-          if(mousePressed){
-          gameState=GAME_RUN;}
-          }else{
-            image(restartNormalImg, buttonX, buttonY); 
+      image(restartHoveredImg, buttonX, buttonY);
+      if (mouseX > buttonX && mouseX < buttonX + button_W 
+      && mouseY > buttonY && mouseY < buttonY + button_H){ 
+          if(mousePressed){ 
+            lifeCount = 2;
+            cabbageRandomX = floor(random(7));
+            cabbageRandomY = floor(random(4));
+            soldierRandomX = floor(random(7));
+            soldierRandomY = floor(random(4));
+            groundhogX = 4*block;
+            groundhogY = block;
+            image(groundhogImg, groundhogX, groundhogY);
+            gameState = GAME_RUN;
+          }
           break;}
         }}
 
-
 void keyPressed(){
+  float newTime = millis();
   if (key == CODED) {
-    float newTime = millis();//time when the groundhog started moving
     switch (keyCode){
       case DOWN:
-        if (newTime - lastTime > 250) {
         downPressed = true;
         actionFrame = 0;
-        grfinalY = grfinalY+80;
-        lastTime = newTime;
-        if(groundhogY+block > height){
-        groundhogY = height-block;
-        }
-        break; 
-      }
+        groundhogY = groundhogY+block;
+        lastTime = newTime; 
+      break;
+      
       case RIGHT:
-        if (newTime - lastTime > 250) {
         rightPressed = true;
         actionFrame = 0;
-        grfinalX = grfinalX+80;
+        groundhogX = groundhogX+block;
         lastTime = newTime;
-        if(groundhogX+block > width){
-        groundhogX = width-block;
-        }
-      }
-        break;
+      break;
+      
       case LEFT:
-        if (newTime - lastTime > 250) {
         leftPressed = true;   
         actionFrame = 0;
-        grfinalX = grfinalX-80;
+        groundhogX = groundhogX-block;
         lastTime = newTime;
-        if(groundhogX+block > width){
-        groundhogX = width-block;
-        }
-        break;
-      }
+      break;
     }  
   }
-  
+}
 
 void keyReleased(){
-        image(groundhogImg, grfinalX, grfinalY );
-  }
+        image(groundhogImg, groundhogX, groundhogY );
+}
