@@ -186,34 +186,34 @@ void draw(){
           //groundhog frame 
           if (downPressed) {
             actionFrame++;
+            groundhogYPlus = groundhogY;
             if (actionFrame > 0 && actionFrame < 15) {
               groundhogYPlus += block / 15.0;
-              image(downImg, groundhogX, groundhogY + groundhogYPlus);
+              image(downImg, groundhogX, groundhogYPlus);
             } else {
               groundhogY = groundhogY + block;
-              downPressed = false;
          }
         }
       
           if (rightPressed) {
             actionFrame++;
+            groundhogXPlus = groundhogX;
             if (actionFrame > 0 && actionFrame < 15) {
               groundhogXPlus += block / 15.0;
-              image(rightImg, groundhogX + groundhogXPlus, groundhogY);
+              image(rightImg, groundhogXPlus, groundhogY);
             } else {
               groundhogX = groundhogX + block;
-              rightPressed = false;
          }
         }
                 
           if (leftPressed) {
             actionFrame++;
+            groundhogXPlus = groundhogX;
             if (actionFrame > 0 && actionFrame < 15) {
               groundhogXPlus -= block / 15.0;
-              image(leftImg, groundhogX, groundhogY);
+              image(leftImg, groundhogXPlus, groundhogY);
             } else {
               groundhogX = groundhogX - block;
-              leftPressed = false;
          }
         }
  }       
@@ -241,7 +241,6 @@ void draw(){
         }}
 
 void keyPressed(){
-  float newTime = millis();
   if (key == CODED) {
     switch (keyCode){
       case DOWN:
