@@ -115,7 +115,6 @@ void draw(){
           stroke(255,255,0);
           ellipse(590,50,120,120);
           //sun
-          lifeCount = 2;
           
           image(groundhogImg,groundhogX, groundhogY);
           /////////////////////////////boundary detection
@@ -166,8 +165,8 @@ void draw(){
           lifeCount -= 1;
           if (lifeCount < 1){
           gameState = GAME_LOSE;
-          break;
-          }}
+            }
+          }
           
           //where's the cabbage 
           float cabfinalX = cabbageRandomX*block;
@@ -177,13 +176,13 @@ void draw(){
           //eat the cabbage and recover the heart
           if(groundhogX >= cabfinalX && groundhogX + block <= cabfinalX +block
           && groundhogY >= cabfinalY && groundhogY + block <= cabfinalY +block){
-            cabfinalX = -80;
-            cabfinalY = -80;
+            cabfinalX = -1000;
+            cabfinalY = -1000;
             lifeCount += 1;            
             if (lifeCount > 3){
             lifeCount = 3;
             }  
-         
+      //////////////////////////////////////////////////////////////////////////framerate setting   
           //groundhog frame 
           if (downPressed) {
             actionFrame++;
