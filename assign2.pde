@@ -177,9 +177,9 @@ void draw(){
           //eat the cabbage and recover the heart
           if(groundhogX >= cabfinalX && groundhogX + block <= cabfinalX +block
           && groundhogY >= cabfinalY && groundhogY + block <= cabfinalY +block){
-            lifeCount += 1;
-            image(cabbageImg , -1000, -1000);
-            gameState = GAME_RUN;
+            cabfinalX = -80;
+            cabfinalY = -80;
+            lifeCount += 1;            
             if (lifeCount > 3){
             lifeCount = 3;
             }  
