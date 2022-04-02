@@ -105,17 +105,15 @@ void draw(){
     case GAME_RUN :
           //basic settings
           image(bgImg,0,0);//bg
-          fill(124,204,25);
-          strokeWeight(0);
-          noStroke();
-          rect(0,145,640,15);//grass
-          image(soilImg,0,160);
-          //soil
           fill(253,184,19);
           strokeWeight(5);
           stroke(255,255,0);
-          ellipse(590,50,120,120);
-          //sun
+          ellipse(590,50,120,120);//sun
+          noStroke();
+          fill(124,204,25);
+          rect(0,145,640,15);//grass
+          image(soilImg,0,160);
+          //soil
           
           image(groundhogImg,groundhogX, groundhogY);
           /////////////////////////////boundary detection
