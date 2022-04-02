@@ -158,8 +158,7 @@ void draw(){
           
             
           //soldier and groundhog touch detection
-          if (groundhogX < xSoldier+block && groundhogX < xSoldier-block
-          && groundhogY == ySoldier ){
+          if(groundhogX<xSoldier-80+block&&groundhogX+block>xSoldier-80&&groundhogY<ySoldier+block&&groundhogY+block>ySoldier){
           groundhogX = 4*block;
           groundhogY = block;
           lifeCount -= 1;
