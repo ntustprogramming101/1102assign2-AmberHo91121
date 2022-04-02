@@ -223,9 +223,10 @@ void draw(){
       
     case GAME_LOSE :
       image(gameOverImg, 0, 0);
-      image(restartHoveredImg, buttonX, buttonY);
+      image(restartNormalImg, buttonX, buttonY);
       if (mouseX > buttonX && mouseX < buttonX + button_W 
       && mouseY > buttonY && mouseY < buttonY + button_H){ 
+        image(restartHoveredImg, buttonX, buttonY);
           if(mousePressed){ 
             lifeCount = 2;
             cabbageRandomX = floor(random(7));
