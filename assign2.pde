@@ -107,6 +107,7 @@ void draw(){
           image(bgImg,0,0);//bg
           fill(124,204,25);
           strokeWeight(0);
+          noStroke();
           rect(0,145,640,15);//grass
           image(soilImg,0,160);
           //soil
