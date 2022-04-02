@@ -1,4 +1,4 @@
-  PImage bgImg, soilImg,titleImg,robotImg,lifeImg,cabbageImg;
+PImage bgImg, soilImg,titleImg,robotImg,lifeImg,cabbageImg;
   int block = 80;
   float lifeCount = 2;
   
@@ -28,6 +28,9 @@
   PImage downImg;
   PImage rightImg;
   PImage leftImg;
+  int hogStat;
+  int timer;
+  final int GR_NORM=0, GR_DOWN=1, GR_RIGHT=2, GR_LEFT=3;
   //groundhog
   
   PImage soldierImg;
@@ -115,7 +118,6 @@ void draw(){
           image(soilImg,0,160);
           //soil
           
-          image(groundhogImg,groundhogX, groundhogY);
           /////////////////////////////boundary detection
           if(groundhogY >= height){
           groundhogY = height-block;
@@ -128,6 +130,44 @@ void draw(){
           if(groundhogX <= 0){
           groundhogX = 0;
           } //left boundary
+          //Draw hog
+        switch(hogStat){
+          case GR_NORM:
+            image(groundhogImg,groundhogX,groundhogY);
+            break;
+          case GR_DOWN:
+            image(downImg,groundhogX,groundhogY);
+            timer+=1;
+            groundhogY+=80.0/15;
+            break;
+          case GR_RIGHT:
+            image(rightImg,groundhogX,groundhogY);
+            timer+=1;
+            groundhogX+=80.0/15;
+            break;
+          case GR_LEFT:
+            image(leftImg,groundhogX,groundhogY);
+            timer+=1;
+            groundhogX-=80.0/15;
+            break;
+        }
+        //check timer
+        if(timer==15){
+          hogStat=GR_NORM;
+          if(groundhogY%block<30){//fix float point offset
+            groundhogY=groundhogY-groundhogY%block;
+          }else{
+            groundhogY=groundhogY-groundhogY%block+block;
+          }
+          if(groundhogX%block<30){
+            groundhogX=groundhogX-groundhogX%block;
+          }else{
+            groundhogX=groundhogX-groundhogX%block+block;
+          }
+          //println(hogX);
+          //println(hogY);
+          timer=0;
+        }
           ///////////////////////////////groundhog      
           
           //heart
@@ -243,32 +283,28 @@ void draw(){
         }}
 
 void keyPressed(){
-  if (key == CODED) {
-    switch (keyCode){
+  if(key ==CODED){
+    switch(keyCode){
       case DOWN:
-        downPressed = true;
-        actionFrame = 0;
-        groundhogY = groundhogY+block;
-        lastTime = newTime; 
-      break;
-      
+        if(groundhogY+block<height&&hogStat==GR_NORM){
+          hogStat=GR_DOWN;
+          timer=0;
+        }
+        break;
       case RIGHT:
-        rightPressed = true;
-        actionFrame = 0;
-        groundhogX = groundhogX+block;
-        lastTime = newTime;
-      break;
-      
+        if(groundhogX+block<width&&hogStat==GR_NORM){
+          hogStat=GR_RIGHT;
+          timer=0;
+        }
+        break;
       case LEFT:
-        leftPressed = true;   
-        actionFrame = 0;
-        groundhogX = groundhogX-block;
-        lastTime = newTime;
+        if(groundhogX>0&&hogStat==GR_NORM){
+          hogStat=GR_LEFT;
+          timer=0;
       break;
-    }  
+    }}
   }
 }
 
 void keyReleased(){
-        image(groundhogImg, groundhogX, groundhogY );
 }
